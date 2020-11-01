@@ -14,26 +14,72 @@ for (const file of commandFiles){
     Client.commands.set(command.name, command)
 
 }
+
+
+const muteModel = require("./models/mute")
 Client.once("ready", () =>{
     console.log("Active")
-
+    console.log(Client.commands)
     mongoose.connect(mongo_url, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     }).then(console.log("mongo db connected"))
+    setInterval(async() =>{
+        
+        for (const guild of Client.guilds.cache){
+            const muteArray = await muteModel.find({
+                guildID: guild[0],
+            })
+            
+            for (const muteDoc of muteArray){
+                if(Date.now() >= Number(muteDoc.length)){
+                    const guild = Client.guilds.cache.get(muteDoc.guildID)
+                    const member = guild ? guild.members.cache.get(muteDoc.memberID) : null
+                    const muteRole = guild ? guild.roles.cache.find(r => r.name == "Muted") : null
 
+                    if(member){
+                        await member.roles.remove(muteRole ? muteRole.id : "").catch(err => console.log(err))
+                        member.send(`you  have been unmuted from ${guild}`)
+                        muteDoc.memberRole.forEach(async (role) => {
+                                await member.roles.add(role).catch(err => console.log(err))
+                             })
+                    }
+
+                    await muteDoc.deleteOne().catch(err => console.log(err))
+                }
+            }
+        }
+    }, 60000)
+})
+
+Client.on("guildMemberAdd", async member =>{
+    const muteDoc = await muteModel.findOne({
+        guildID: member.guild.id,
+        memberID: member.id,
+
+    })
+    if(muteDoc){
+        const muterole = member.guild.roles.cache.find(r => r.name == "Muted")
+
+        if(muteRole)member.roles.add(muterole.id).catch(err => console.log(err))
+
+        muteDoc.memberRoles = []
+
+        await muteDoc.save().catch(err => console.log(err))
+    }
 })
 
 Client.on('message', message =>{
+    
     if(!message.guild || message.author.bot || !message.content.startsWith(prefix)) return
-
+    
     const args = message.content.substring(prefix.length).split(" ")
     const command = args.shift()
 
     const cmd = Client.commands.get(command)
-
+    
     if(!cmd) return
-
+    
     try{
         cmd.execute(message, args)
     }
@@ -41,4 +87,5 @@ Client.on('message', message =>{
         console.log(error)
         message.channel.send("There seems to be an error while excecuting this command")
     }
+    
 })
