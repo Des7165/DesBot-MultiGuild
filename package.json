@@ -1,0 +1,15 @@
+{
+  "name": "package.json",
+  "version": "1.0.0",
+  "description": "Multi Guild bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Des",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.4.1",
+    "mongoose": "^5.10.11"
+  }
+}
