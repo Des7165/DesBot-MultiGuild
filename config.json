@@ -1,5 +1,5 @@
+
 {
     "bot_token": "NzcyNTAzNzY2MzM5NDIwMjIx.X57oMg.PrEkf7kSojGlieVTphsonYrl19k",
-    "mongo_url": "mongodb+srv://Des:bCKzhn9fQrPfmRnJ@cluster0.764zs.mongodb.net/Des?retryWrites=true&w=majority",
-    "prefix": "?"
+    "mongo_url": "mongodb+srv://Des:bCKzhn9fQrPfmRnJ@cluster0.764zs.mongodb.net/Des?retryWrites=true&w=majority"
 }

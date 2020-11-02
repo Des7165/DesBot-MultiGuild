@@ -24,7 +24,7 @@ module.exports = {
         }
         if(!muteRole){
             muteRole = await message.guild.roles.create({
-                date:{
+                data:{
                     name:"Muted",
                     color:"BLACK",
                 }

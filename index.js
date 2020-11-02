@@ -1,9 +1,9 @@
-const {bot_token, mongo_url, prefix} = require('./config.json')
+const {bot_token, mongo_url} = require('./config.json')
 const Discord = require("discord.js")
 const Client = new Discord.Client()
 const mongoose = require('mongoose')
 const fs = require("fs")
-
+const prefix = require("./models/prefix");
 Client.commands = new Discord.Collection()
 
 Client.login(bot_token)
@@ -20,6 +20,7 @@ const muteModel = require("./models/mute")
 Client.once("ready", () =>{
     console.log("Active")
     console.log(Client.commands)
+    
     mongoose.connect(mongo_url, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -69,23 +70,50 @@ Client.on("guildMemberAdd", async member =>{
     }
 })
 
-Client.on('message', message =>{
+Client.on('message', async (message) =>{
+    if(!message.guild || message.author.bot ) return
+    const data = await prefix.findOne({
+        GuildID: message.guild.id
+    });
+    const messageArray = message.content.split(' ');
+    const cmds = messageArray[0];
+    const args = messageArray.slice(1);
     
-    if(!message.guild || message.author.bot || !message.content.startsWith(prefix)) return
-    
-    const args = message.content.substring(prefix.length).split(" ")
-    const command = args.shift()
+ 
+    if(data) {
+        const prefix = data.Prefix;
 
-    const cmd = Client.commands.get(command)
-    
-    if(!cmd) return
-    
-    try{
-        cmd.execute(message, args)
+        if (!message.content.startsWith(prefix)) return;
+        const cmd = Client.commands.get(cmds.slice(prefix.length)) || bot.commands.get(bot.aliases.get(cmds.slice(prefix.length)));
+        try{
+            cmd.execute(message, args)
+        }
+        catch (error){
+            console.log(error)
+            message.channel.send("There seems to be an error while excecuting this command")
+        }
+        
+    } else if (!data) {
+        //set the default prefix here
+        const prefix = "?";
+        
+        if (!message.content.startsWith(prefix)) return;
+
+        const cmd = Client.commands.get(cmds.slice(prefix.length)) || bot.commands.get(bot.aliases.get(cmds.slice(prefix.length))).catch(err => console.log(err))
+        try{
+            cmd.execute(message, args)
+        }
+        catch (error){
+            console.log(error)
+            message.channel.send("There seems to be an error while excecuting this command")
+        }
     }
-    catch (error){
-        console.log(error)
-        message.channel.send("There seems to be an error while excecuting this command")
-    }
+   
+    
+    
+    
+    
+    
+
     
 })

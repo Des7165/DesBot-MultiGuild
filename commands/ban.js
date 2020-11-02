@@ -28,7 +28,7 @@ module.exports = {
          try{
              message.guild.members.ban(menitonedMember, {reason: reason})
             
-             message.channel.send(`Banned ${menitonedMember} for **${reason}** `)
+             message.channel.send(`Banned ${menitonedMember} ${reason ? `for **${reason}**` : ""}`)
          }
          catch (error){
              console.log(error)
