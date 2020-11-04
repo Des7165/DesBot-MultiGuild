@@ -82,9 +82,8 @@ Client.on('message', async (message) =>{
  
     if(data) {
         const prefix = data.Prefix;
-
         if (!message.content.startsWith(prefix)) return;
-        const cmd = Client.commands.get(cmds.slice(prefix.length)) || bot.commands.get(bot.aliases.get(cmds.slice(prefix.length)));
+        const cmd = Client.commands.get(cmds.slice(prefix.length)) || Client.commands.get(bot.aliases.get(cmds.slice(prefix.length))).catch(err => console.log(err))
         try{
             cmd.execute(message, args)
         }
