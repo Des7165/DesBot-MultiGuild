@@ -1,5 +1,6 @@
 const {bot_token, mongo_url} = require('./config.json')
 const Discord = require("discord.js")
+const client = new Discord.Client({partials: ['MESSAGE', 'REACTION', 'CHANNEL']})
 const Client = new Discord.Client()
 const mongoose = require('mongoose')
 const fs = require("fs")
@@ -24,6 +25,7 @@ Client.once("ready", () =>{
     mongoose.connect(mongo_url, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        useFindAndModify: true
     }).then(console.log("mongo db connected"))
     setInterval(async() =>{
         
