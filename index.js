@@ -1,11 +1,12 @@
 const {bot_token, mongo_url} = require('./config.json')
 const Discord = require("discord.js")
-const client = new Discord.Client({partials: ['MESSAGE', 'REACTION', 'CHANNEL']})
+const client = new Discord.Client({partials: ['MESSAGE', 'REACTION', 'CHANNEL', 'USER']})
 const Client = new Discord.Client()
 const mongoose = require('mongoose')
 const fs = require("fs")
 const prefix = require("./models/prefix");
 Client.commands = new Discord.Collection()
+const enmap = require("enmap")
 
 Client.login(bot_token)
 
