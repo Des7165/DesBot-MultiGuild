@@ -5,6 +5,7 @@ module.exports = {
     description: "nukes a channel",
 
     execute(message, args) {
+        if(!message.member.hasPermission("ADMINISTRATOR")) return message.channel.send("You can\'t use this command")
         let categoryId = message.channel.parentID
         let position = message.channel.rawPosition
         const chanName = message.channel.name;
